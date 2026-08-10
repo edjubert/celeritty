@@ -5,34 +5,18 @@
  * caller decides when to draw, so a hidden panel can simply stop calling it.
  */
 
-import type { CellMetrics } from "./atlas-layout";
+import type { AtlasTexture, Renderer, RendererFactory, RendererGrid } from "./renderer-interface";
 import {
   buildInstanceData,
   ensureGlyphs,
   FLOATS_PER_INSTANCE,
-  type GlyphSource,
 } from "./instance-data";
 import { buildPaletteBuffer, PALETTE_ENTRIES } from "./palette";
 import { TERMINAL_SHADER } from "./terminal-shader.wgsl";
 
-export interface RendererGrid {
-  columns: number;
-  lines: number;
-  /** Packed snapshot: four u32 per cell. Rebuild it after every engine call. */
-  packed: Uint32Array;
-}
-
-export interface AtlasTexture extends GlyphSource {
-  readonly source: OffscreenCanvas;
-  readonly isDirty: boolean;
-  /** Physical-pixel size of one cell — the renderer draws at exactly this size. */
-  readonly cell: CellMetrics;
-  markUploaded(): void;
-}
-
 const BYTES_PER_FLOAT = 4;
 
-export class TerminalRenderer {
+export class TerminalRenderer implements Renderer {
   #device: GPUDevice;
   #context: GPUCanvasContext;
   #pipeline: GPURenderPipeline;
@@ -231,6 +215,23 @@ export class TerminalRenderer {
     this.#device.queue.submit([encoder.finish()]);
   }
 
+  /**
+   * Release every GPU resource this renderer owns, including its device.
+   * Each renderer requests its own adapter and device in `create`, so
+   * destroying the device here frees the whole allocation rather than
+   * leaking one per terminal that is torn down.
+   */
+  dispose(): void {
+    this.#texture?.destroy();
+    this.#texture = undefined;
+    this.#instanceBuffer?.destroy();
+    this.#instanceBuffer = undefined;
+    this.#instanceCapacity = 0;
+    this.#uniformBuffer.destroy();
+    this.#paletteBuffer.destroy();
+    this.#device.destroy();
+  }
+
   #uploadAtlasIfDirty(): void {
     if (this.#texture !== undefined && !this.#atlas.isDirty) {
       return;
@@ -266,3 +267,13 @@ export class TerminalRenderer {
     this.#instanceCapacity = byteLength;
   }
 }
+
+/**
+ * The WebGPU implementation of `RendererFactory`.
+ *
+ * Throws — loudly — when WebGPU is unavailable. There is deliberately no
+ * fallback: silently degrading would hide a real driver or configuration
+ * problem behind a mysteriously slow terminal.
+ */
+export const createWebGpuRenderer: RendererFactory = (canvas, atlas) =>
+  TerminalRenderer.create(canvas, atlas);

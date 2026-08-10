@@ -1,0 +1,16 @@
+[workspace]
+resolver = "2"
+members = ["crates/terminal-core"]
+# Vendored upstream copy, patched for the wasm target. It keeps its own
+# manifest and must not inherit this workspace's lints or edition.
+exclude = ["crates/terminal-core/vendor/alacritty_terminal"]
+
+[workspace.package]
+edition = "2021"
+rust-version = "1.85.0"
+license = "Apache-2.0"
+
+[workspace.lints.rust]
+dead_code = "deny"
+unused_imports = "deny"
+unused_variables = "deny"

@@ -215,7 +215,11 @@ pub fn encode_mouse(input: &MouseInput) -> Option<Vec<u8>> {
     }
 
     let button = mouse_button_code(input)?;
-    let final_byte = if input.kind == MouseEventKind::Release { b'm' } else { b'M' };
+    let final_byte = if input.kind == MouseEventKind::Release {
+        b'm'
+    } else {
+        b'M'
+    };
 
     // SGR coordinates are 1-indexed, and the column comes before the line.
     let sequence = format!(
@@ -555,7 +559,11 @@ mod tests {
     fn motion_requires_the_matching_reporting_mode() {
         let mut drag = mouse(MouseEventKind::Move, MouseButton::Left, 2, 3);
         drag.reporting = MouseReporting::Click;
-        assert_eq!(encode_mouse(&drag), None, "click-only mode must not report motion");
+        assert_eq!(
+            encode_mouse(&drag),
+            None,
+            "click-only mode must not report motion"
+        );
 
         let mut drag = mouse(MouseEventKind::Move, MouseButton::Left, 2, 3);
         drag.reporting = MouseReporting::Drag;
@@ -563,7 +571,11 @@ mod tests {
 
         let mut hover = mouse(MouseEventKind::Move, MouseButton::None, 2, 3);
         hover.reporting = MouseReporting::Drag;
-        assert_eq!(encode_mouse(&hover), None, "drag mode must not report bare hover");
+        assert_eq!(
+            encode_mouse(&hover),
+            None,
+            "drag mode must not report bare hover"
+        );
 
         let mut hover = mouse(MouseEventKind::Move, MouseButton::None, 2, 3);
         hover.reporting = MouseReporting::Motion;

@@ -74,7 +74,11 @@ mod tests {
 
     #[test]
     fn true_color_encodes_as_packed_rgb() {
-        let encoded = encode_color(Color::Spec(Rgb { r: 0x12, g: 0x34, b: 0x56 }));
+        let encoded = encode_color(Color::Spec(Rgb {
+            r: 0x12,
+            g: 0x34,
+            b: 0x56,
+        }));
         assert!(is_rgb(encoded));
         assert_eq!(payload(encoded), 0x0012_3456);
     }

@@ -1,7 +1,7 @@
 //! Drives an `alacritty_terminal` grid from a raw ANSI byte stream.
 
 use alacritty_terminal::event::{Event, EventListener};
-use alacritty_terminal::grid::Dimensions;
+use alacritty_terminal::grid::{Dimensions, Scroll};
 use alacritty_terminal::index::{Column, Line, Point};
 use alacritty_terminal::term::cell::Flags;
 use alacritty_terminal::term::{Config, Term, TermDamage, TermMode};
@@ -79,6 +79,7 @@ impl TerminalCore {
     /// an escape sequence split across two reads is handled correctly.
     pub fn feed(&mut self, bytes: &[u8]) {
         self.parser.advance(&mut self.term, bytes);
+        self.reset_scroll();
     }
 
     pub fn resize(&mut self, size: TerminalSize) {
@@ -141,6 +142,41 @@ impl TerminalCore {
     /// Whether the alternate screen is active.
     pub fn alt_screen(&self) -> bool {
         self.term.mode().contains(TermMode::ALT_SCREEN)
+    }
+
+    /// Scroll the display by `delta` lines: positive moves up into history,
+    /// negative moves down toward the live screen. Clamped to the available
+    /// history by `alacritty_terminal` itself — over-scrolling is a no-op at
+    /// the boundary, not an error.
+    pub fn scroll_lines(&mut self, delta: i32) {
+        self.term.scroll_display(Scroll::Delta(delta));
+    }
+
+    /// How many lines of history are available to scroll into.
+    pub fn max_scroll(&self) -> usize {
+        self.term.grid().history_size()
+    }
+
+    /// How far the display is currently scrolled back. `0` means the live
+    /// screen is showing.
+    pub fn display_offset(&self) -> usize {
+        self.term.grid().display_offset()
+    }
+
+    /// Jump back to the live screen.
+    pub fn reset_scroll(&mut self) {
+        self.term.scroll_display(Scroll::Bottom);
+    }
+
+    /// Set how many lines of scrollback history are kept. Replaces the whole
+    /// `Config` — safe today because nothing else in it is customized
+    /// (`Config::default()` is used everywhere else in this crate); revisit
+    /// if a future change starts customizing another `Config` field.
+    pub fn set_scrollback_lines(&mut self, lines: usize) {
+        self.term.set_options(Config {
+            scrolling_history: lines,
+            ..Config::default()
+        });
     }
 
     /// One viewport row as text, trailing blanks trimmed. Reading aid for
@@ -575,5 +611,62 @@ mod tests {
 
         core.feed(b"\x1b[?1000l\x1b[?1002l");
         assert_eq!(core.mouse_reporting(), MouseReporting::None);
+    }
+
+    #[test]
+    fn scrolling_back_reveals_earlier_output_then_clamps_at_the_top() {
+        let mut core = TerminalCore::new(TerminalSize {
+            columns: 4,
+            screen_lines: 1,
+        });
+        core.feed(b"one\r\ntwo\r\nthree\r\n");
+        assert_eq!(core.max_scroll(), 4);
+
+        core.scroll_lines(1);
+        assert_eq!(core.display_offset(), 1);
+
+        core.scroll_lines(100);
+        assert_eq!(core.display_offset(), core.max_scroll());
+    }
+
+    #[test]
+    fn new_output_snaps_the_view_back_to_the_bottom() {
+        let mut core = TerminalCore::new(TerminalSize {
+            columns: 4,
+            screen_lines: 1,
+        });
+        core.feed(b"one\r\ntwo\r\nthree\r\n");
+        core.scroll_lines(2);
+        assert_eq!(core.display_offset(), 2);
+
+        core.feed(b"four\r\n");
+        assert_eq!(core.display_offset(), 0);
+    }
+
+    #[test]
+    fn reset_scroll_returns_to_the_bottom_without_new_output() {
+        let mut core = TerminalCore::new(TerminalSize {
+            columns: 4,
+            screen_lines: 1,
+        });
+        core.feed(b"one\r\ntwo\r\n");
+        core.scroll_lines(1);
+        assert_eq!(core.display_offset(), 1);
+
+        core.reset_scroll();
+        assert_eq!(core.display_offset(), 0);
+    }
+
+    #[test]
+    fn set_scrollback_lines_shrinks_the_available_history() {
+        let mut core = TerminalCore::new(TerminalSize {
+            columns: 4,
+            screen_lines: 1,
+        });
+        core.feed(b"one\r\ntwo\r\nthree\r\nfour\r\n");
+        assert_eq!(core.max_scroll(), 5);
+
+        core.set_scrollback_lines(2);
+        assert_eq!(core.max_scroll(), 2);
     }
 }

@@ -150,6 +150,31 @@ impl Terminal {
     pub fn row_text(&self, line: usize) -> String {
         self.core.row_text(line)
     }
+
+    #[wasm_bindgen(js_name = scrollLines)]
+    pub fn scroll_lines(&mut self, delta: i32) {
+        self.core.scroll_lines(delta);
+    }
+
+    #[wasm_bindgen(getter, js_name = maxScroll)]
+    pub fn max_scroll(&self) -> usize {
+        self.core.max_scroll()
+    }
+
+    #[wasm_bindgen(getter, js_name = displayOffset)]
+    pub fn display_offset(&self) -> usize {
+        self.core.display_offset()
+    }
+
+    #[wasm_bindgen(js_name = resetScroll)]
+    pub fn reset_scroll(&mut self) {
+        self.core.reset_scroll();
+    }
+
+    #[wasm_bindgen(js_name = setScrollbackLines)]
+    pub fn set_scrollback_lines(&mut self, lines: usize) {
+        self.core.set_scrollback_lines(lines);
+    }
 }
 
 /// Encode a `keydown` as PTY bytes.

@@ -1,26 +1,29 @@
 {
-  "name": "@cadencr/terminal-core",
-  "private": true,
-  "version": "0.10.0",
-  "description": "WebGPU terminal renderer and its wasm ANSI engine, used by Cadencr's Neovim editor panel.",
+  "name": "@cadencr/cathode",
+  "version": "0.0.0",
+  "description": "Terminal component for the web, with a Rust/alacritty engine compiled to WebAssembly.",
   "license": "Apache-2.0",
   "type": "module",
+  "files": ["dist"],
   "exports": {
     ".": {
-      "types": "./renderer/index.ts",
-      "default": "./renderer/index.ts"
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
     }
   },
   "scripts": {
-    "build": "wasm-pack build --target web --out-dir pkg",
-    "lint": "oxlint renderer/",
-    "lint:fix": "oxlint --fix renderer/",
-    "format": "oxfmt renderer/",
-    "format:check": "oxfmt --check renderer/",
+    "build:wasm": "wasm-pack build crates/terminal-core --target web --out-dir ../../src/wasm --out-name cathode",
+    "build": "pnpm build:wasm && vite build && tsc -p tsconfig.build.json",
+    "test": "pnpm test:rust && pnpm test:ts",
+    "test:rust": "cargo test --workspace",
+    "test:ts": "vitest run",
+    "lint": "oxlint src/ harness/",
+    "lint:fix": "oxlint --fix src/ harness/",
+    "format": "oxfmt src/ harness/",
+    "format:check": "oxfmt --check src/ harness/",
     "ts-check": "tsc --noEmit",
-    "test": "vitest run",
     "knip": "knip",
-    "harness": "vite"
+    "harness": "pnpm build:wasm && vite --config vite.harness.config.ts"
   },
   "devDependencies": {
     "@types/node": "^22.10.0",
@@ -31,5 +34,8 @@
     "typescript": "^5.7.0",
     "vite": "6.4.3",
     "vitest": "4.1.9"
+  },
+  "engines": {
+    "node": ">=22.18.0 <23.0.0"
   }
 }

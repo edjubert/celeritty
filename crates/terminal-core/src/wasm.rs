@@ -274,6 +274,24 @@ pub fn encode_mouse_js(
     })
 }
 
+/// Resolve an `alacritty.toml` into terminal options, in the browser.
+///
+/// `fallback` is a `TerminalPalette` object; every colour the file does not
+/// set comes from it. Throws a JavaScript `Error` when the TOML is malformed
+/// or the fallback is not a valid palette — both mean the caller's input is
+/// wrong, and returning a silently defaulted object would hide it.
+#[wasm_bindgen(js_name = resolveAlacrittyToml)]
+pub fn resolve_alacritty_toml_js(source: &str, fallback: JsValue) -> Result<JsValue, JsValue> {
+    let fallback: alacritty_config::options::TerminalPalette =
+        serde_wasm_bindgen::from_value(fallback)
+            .map_err(|e| JsValue::from_str(&format!("invalid fallback palette: {e}")))?;
+
+    let options = alacritty_config::options::resolve(source, &fallback)
+        .map_err(|e| JsValue::from_str(&e))?;
+
+    serde_wasm_bindgen::to_value(&options).map_err(|e| JsValue::from_str(&e.to_string()))
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

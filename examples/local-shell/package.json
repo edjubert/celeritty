@@ -1,0 +1,17 @@
+{
+  "name": "cathode-example-local-shell",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "server": "node server.mjs",
+    "dev": "vite"
+  },
+  "dependencies": {
+    "@cadencr/cathode": "^1.0.0"
+  },
+  "devDependencies": {
+    "node-pty": "^1.1.0",
+    "vite": "^8.2.1",
+    "ws": "^8.21.3"
+  }
+}

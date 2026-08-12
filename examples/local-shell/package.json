@@ -13,5 +13,8 @@
     "node-pty": "^1.1.0",
     "vite": "^8.2.1",
     "ws": "^8.21.3"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": ["node-pty"]
   }
 }

@@ -12,17 +12,29 @@ const server = new WebSocketServer({ port: PORT });
 console.log(`terminal server on ws://localhost:${PORT}`);
 
 server.on("connection", (socket) => {
-  const term = pty.spawn(SHELL, [], {
-    name: "xterm-256color",
-    cols: 80,
-    rows: 24,
-    cwd: process.env.HOME,
-    env: process.env,
-    // Buffers, not strings. node-pty decodes as UTF-8 by default, which
-    // corrupts binary output and any multi-byte character split across a
-    // read boundary. This is the same reason PROTOCOL.md uses binary frames.
-    encoding: null,
-  });
+  let term;
+  try {
+    term = pty.spawn(SHELL, [], {
+      name: "xterm-256color",
+      cols: 80,
+      rows: 24,
+      cwd: process.env.HOME,
+      env: process.env,
+      // Buffers, not strings. node-pty decodes as UTF-8 by default, which
+      // corrupts binary output and any multi-byte character split across a
+      // read boundary. This is the same reason PROTOCOL.md uses binary frames.
+      encoding: null,
+    });
+  } catch (error) {
+    // A failed spawn must not take the server down with it — one bad
+    // connection would otherwise disconnect every other client. Report it on
+    // the protocol's own error channel and close just this socket.
+    socket.send(
+      JSON.stringify({ type: "error", message: `could not start ${SHELL}: ${error.message}` }),
+    );
+    socket.close();
+    return;
+  }
 
   socket.send(JSON.stringify({ type: "ready", columns: 80, rows: 24 }));
 

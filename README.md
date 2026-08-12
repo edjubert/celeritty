@@ -18,7 +18,8 @@ instead of reimplementing it in JavaScript.
 - `crates/terminal-core/` — the wasm engine: ANSI grid, keyboard and mouse
   encoding, snapshot packing, `wasm-bindgen` façade
 - `crates/terminal-core/vendor/alacritty_terminal/` — patched upstream copy
-- `src/renderer/` — WebGPU renderer: glyph atlas, palette, shader, metrics
+- `src/renderer/` — WebGPU renderer: glyph atlas, palette, shader, metrics,
+  and a fake renderer for testing
 - `harness/` — standalone browser demo, the only way to exercise the real GPU
   path
 
@@ -50,6 +51,10 @@ are not committed.
 Rendering requires WebGPU. There is no Canvas 2D or DOM fallback; the
 renderer sits behind an interface so one can be added without touching the
 engine.
+
+A `FakeRenderer` is exported from the package for testing without a GPU.
+It records frames, palettes, and atlases in memory so integration tests can
+assert what the terminal drew.
 
 ## License
 

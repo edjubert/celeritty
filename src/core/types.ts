@@ -1,0 +1,90 @@
+/** The data contract: what a host must supply, and what it gets told about. */
+
+// GridSize is NOT redeclared here — it already exists in the renderer and is
+// already part of the package surface. A second declaration would collide in
+// src/index.ts and both would be dropped.
+import type { GridSize } from "../renderer/grid-metrics";
+
+/**
+ * Terminal colors. The sixteen ANSI slots plus the three defaults, each a CSS
+ * color string. Slot order follows `vte::ansi::NamedColor`: 0-7 normal, 8-15
+ * bright, then foreground, background, cursor.
+ */
+export interface TerminalPalette {
+  black: string;
+  red: string;
+  green: string;
+  yellow: string;
+  blue: string;
+  magenta: string;
+  cyan: string;
+  white: string;
+  brightBlack: string;
+  brightRed: string;
+  brightGreen: string;
+  brightYellow: string;
+  brightBlue: string;
+  brightMagenta: string;
+  brightCyan: string;
+  brightWhite: string;
+  foreground: string;
+  background: string;
+  cursor: string;
+}
+
+export interface TerminalFont {
+  family: string;
+  size: number;
+  weight?: string;
+  lineHeight?: number;
+}
+
+export interface TerminalCursor {
+  /**
+   * NOT YET HONORED. The WebGPU renderer draws a single cursor shape.
+   * The field exists because the configuration crate resolves it and the
+   * shared fixtures assert it — dropping it here would desynchronize the two
+   * halves of the contract. See the repository followups.
+   */
+  style: "block" | "beam" | "underline";
+  /** NOT YET HONORED — the renderer does not blink. Same reasoning as `style`. */
+  blink: boolean;
+}
+
+/**
+ * A fully resolved configuration. The component resolves nothing: whoever
+ * constructs this object decided which source won and applied any overrides.
+ */
+export interface TerminalOptions {
+  font: TerminalFont;
+  colors: TerminalPalette;
+  cursor: TerminalCursor;
+  /** Lines of history kept above the live screen. */
+  scrollback: number;
+}
+
+export interface CellPoint {
+  line: number;
+  column: number;
+}
+
+/**
+ * Events a terminal emits. There is deliberately no `bell` and no `title`:
+ * the wasm façade exposes neither, and declaring an event that never fires
+ * would be a lie in the type. Plan 05 adds `link-activate`.
+ */
+export interface TerminalEventMap {
+  /** Bytes headed for the PTY, already encoded. */
+  data: Uint8Array;
+  resize: GridSize;
+  /** The selected text, or `null` when the selection was cleared. */
+  "selection-change": string | null;
+  /**
+   * A runtime failure the host must surface. Programming errors — calling a
+   * method after `dispose`, passing malformed options — throw synchronously
+   * instead.
+   */
+  error: Error;
+}
+
+export type TerminalEvent = keyof TerminalEventMap;

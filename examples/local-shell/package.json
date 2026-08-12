@@ -1,5 +1,5 @@
 {
-  "name": "cathode-example-local-shell",
+  "name": "cathode-term-example-local-shell",
   "private": true,
   "type": "module",
   "scripts": {
@@ -7,7 +7,7 @@
     "dev": "vite"
   },
   "dependencies": {
-    "@cadencr/cathode": "^1.0.0"
+    "cathode-term": "^1.0.0"
   },
   "devDependencies": {
     "node-pty": "^1.1.0",

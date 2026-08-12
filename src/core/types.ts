@@ -87,4 +87,46 @@ export interface TerminalEventMap {
   error: Error;
 }
 
+/** Modifier keys held when a link was activated. */
+export interface LinkModifiers {
+  ctrl: boolean;
+  alt: boolean;
+  shift: boolean;
+  meta: boolean;
+}
+
+/**
+ * A link the user activated. The component never opens it — routing is
+ * product policy (internal versus external domains, a native context menu,
+ * a session cookie), and belongs to whoever embeds the terminal.
+ */
+export interface LinkActivation {
+  url: string;
+  modifiers: LinkModifiers;
+}
+
+/**
+ * Events a terminal emits. There is deliberately no `bell` and no `title`:
+ * the wasm façade exposes neither, and declaring an event that never fires
+ * would be a lie in the type. Plan 05 adds `link-activate`.
+ */
+export interface TerminalEventMap {
+  /** Bytes headed for the PTY, already encoded. */
+  data: Uint8Array;
+  resize: GridSize;
+  /** The selected text, or `null` when the selection was cleared. */
+  "selection-change": string | null;
+  /**
+   * The user activated a link. Nothing has been opened; the host decides
+   * whether and how.
+   */
+  "link-activate": LinkActivation;
+  /**
+   * A runtime failure the host must surface. Programming errors — calling a
+   * method after `dispose`, passing malformed options — throw synchronously
+   * instead.
+   */
+  error: Error;
+}
+
 export type TerminalEvent = keyof TerminalEventMap;

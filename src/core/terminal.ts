@@ -40,6 +40,7 @@ import type {
   TerminalEventMap,
   TerminalOptions,
 } from "./types";
+import type { TerminalTransport } from "../transport/types";
 import { EngineTerminal, encodeKey, engineMemory, loadEngine } from "./wasm";
 
 type AnyListener = (payload: never) => void;
@@ -60,6 +61,8 @@ export class Terminal {
   #dirty = true;
   #grid: GridSize = { columns: 1, lines: 1 };
   #disposed = false;
+  #transport: TerminalTransport | undefined;
+  #transportOff: Array<() => void> = [];
   #selectionStart: CellPoint | null = null;
   #selectionEnd: CellPoint | null = null;
   #dragging = false;
@@ -137,6 +140,7 @@ export class Terminal {
     this.#renderer?.dispose();
     this.#canvas.remove();
     this.#host.style.cursor = "";
+    this.detach();
     this.#listeners.clear();
   }
 
@@ -163,6 +167,50 @@ export class Terminal {
   feed(bytes: Uint8Array): void {
     this.#requireEngine("feed").feed(bytes);
     this.#dirty = true;
+  }
+
+  /**
+   * Connect to a process. Output is fed in, and everything the user types is
+   * written out — so a host that attaches a transport no longer needs to
+   * listen for `data` itself.
+   *
+   * Attaching over an existing transport detaches the old one first, rather
+   * than quietly ending up with two sockets writing to the same grid.
+   */
+  attach(transport: TerminalTransport): void {
+    this.#assertLive("attach");
+    this.detach();
+
+    this.#transport = transport;
+    this.#transportOff = [
+      transport.onData((bytes) => this.feed(bytes)),
+      transport.onClose((reason) => {
+        this.detach();
+        if (reason !== undefined) {
+          this.#emit("error", new Error(reason));
+        }
+      }),
+      this.on("data", (bytes) => transport.write(bytes)),
+      this.on("resize", (grid) => transport.resize(grid.columns, grid.lines)),
+    ];
+
+    // The grid is already measured by the time a host attaches, and the
+    // process was spawned at whatever size the host guessed. Send the real
+    // one immediately, or a full-screen program draws for the wrong grid
+    // until the next resize — which may never come.
+    transport.resize(this.#grid.columns, this.#grid.lines);
+  }
+
+  /** The currently attached transport, if any. */
+  get transport(): TerminalTransport | undefined {
+    return this.#transport;
+  }
+
+  /** Disconnect. Safe to call when nothing is attached. */
+  detach(): void {
+    for (const off of this.#transportOff) off();
+    this.#transportOff = [];
+    this.#transport = undefined;
   }
 
   /** Inject text as if the program had printed it. Does not reach the PTY. */

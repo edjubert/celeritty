@@ -1,4 +1,4 @@
-# cathode
+# cathode-term
 
 Terminal emulator for the web. ANSI parsing runs in Rust compiled to
 WebAssembly (a vendored `alacritty_terminal`); the grid is drawn with WebGPU.
@@ -14,7 +14,7 @@ transport.
 ## Install
 
 ```bash
-pnpm add @cadencr/cathode
+pnpm add cathode-term
 ```
 
 ## Example
@@ -24,8 +24,8 @@ A complete, runnable client and server are in
 
 ```js
 // main.js
-import "@cadencr/cathode/element";
-import { WebSocketTransport } from "@cadencr/cathode/transport/websocket";
+import "cathode-term/element";
+import { WebSocketTransport } from "cathode-term/transport/websocket";
 
 const term = document.getElementById("term");
 
@@ -108,13 +108,13 @@ new WebSocketServer({ port: 8080 }).on("connection", (socket) => {
 Attributes cover font and scrollback only. A page that never assigns
 `options` gets no colours.
 
-Importing `@cadencr/cathode/element` registers the tag. Importing the package
+Importing `cathode-term/element` registers the tag. Importing the package
 root does not.
 
 ## Class
 
 ```ts
-import { Terminal } from "@cadencr/cathode";
+import { Terminal } from "cathode-term";
 
 const term = new Terminal(document.getElementById("host"), options);
 await term.ready;
@@ -157,7 +157,7 @@ which source won, and which overrides applied, is the host's decision.
 To resolve an `alacritty.toml`:
 
 ```ts
-import { loadEngine, resolveAlacrittyToml } from "@cadencr/cathode";
+import { loadEngine, resolveAlacrittyToml } from "cathode-term";
 
 await loadEngine();
 const options = resolveAlacrittyToml(tomlText, fallbackPalette);

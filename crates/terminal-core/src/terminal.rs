@@ -679,21 +679,30 @@ mod tests {
 
     #[test]
     fn selected_text_extracts_a_single_line_range() {
-        let mut core = TerminalCore::new(TerminalSize { columns: 10, screen_lines: 2 });
+        let mut core = TerminalCore::new(TerminalSize {
+            columns: 10,
+            screen_lines: 2,
+        });
         core.feed(b"hello world");
         assert_eq!(core.selected_text(0, 0, 0, 4), "hello");
     }
 
     #[test]
     fn selected_text_spans_multiple_lines() {
-        let mut core = TerminalCore::new(TerminalSize { columns: 5, screen_lines: 2 });
+        let mut core = TerminalCore::new(TerminalSize {
+            columns: 5,
+            screen_lines: 2,
+        });
         core.feed(b"abc\r\ndef");
         assert_eq!(core.selected_text(0, 0, 1, 2), "abc\ndef");
     }
 
     #[test]
     fn selected_text_is_empty_when_corners_are_reversed() {
-        let mut core = TerminalCore::new(TerminalSize { columns: 10, screen_lines: 2 });
+        let mut core = TerminalCore::new(TerminalSize {
+            columns: 10,
+            screen_lines: 2,
+        });
         core.feed(b"hello");
         assert_eq!(core.selected_text(0, 4, 0, 0), "");
     }

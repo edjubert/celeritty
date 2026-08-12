@@ -1,5 +1,5 @@
-import "@cadencr/cathode/element";
-import { WebSocketTransport } from "@cadencr/cathode/transport/websocket";
+import "cathode-term/element";
+import { WebSocketTransport } from "cathode-term/transport/websocket";
 
 // The xterm default palette. Any 19 colours work; the component applies what
 // it is given and resolves nothing.

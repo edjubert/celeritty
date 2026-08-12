@@ -10,5 +10,7 @@ export { buildPaletteBuffer, decodeColor, PALETTE_ENTRIES } from "./palette";
 export type { DecodedColor } from "./palette";
 export { cellAtPixel, gridSizeFor, pixelSizeFor } from "./grid-metrics";
 export type { CssSize, GridSize, PixelSize } from "./grid-metrics";
-export { TerminalRenderer } from "./renderer";
+export { createWebGpuRenderer, TerminalRenderer } from "./renderer";
 export type { AtlasTexture, Renderer, RendererFactory, RendererGrid } from "./renderer-interface";
+export { createFakeRenderer, FakeRenderer } from "./fake-renderer";
+export type { RecordedFrame } from "./fake-renderer";

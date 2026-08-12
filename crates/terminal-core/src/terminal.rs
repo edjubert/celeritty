@@ -247,42 +247,60 @@ mod tests {
 
     #[test]
     fn plain_text_lands_in_the_grid() {
-        let mut core = TerminalCore::new(TerminalSize { columns: 20, screen_lines: 5 });
+        let mut core = TerminalCore::new(TerminalSize {
+            columns: 20,
+            screen_lines: 5,
+        });
         core.feed(b"hello");
         assert_eq!(row(&core, 0), "hello");
     }
 
     #[test]
     fn escape_sequences_are_interpreted_not_printed() {
-        let mut core = TerminalCore::new(TerminalSize { columns: 20, screen_lines: 5 });
+        let mut core = TerminalCore::new(TerminalSize {
+            columns: 20,
+            screen_lines: 5,
+        });
         core.feed(b"\x1b[1;31mhi\x1b[0m");
         assert_eq!(row(&core, 0), "hi");
     }
 
     #[test]
     fn cursor_positioning_writes_at_the_requested_column() {
-        let mut core = TerminalCore::new(TerminalSize { columns: 20, screen_lines: 5 });
+        let mut core = TerminalCore::new(TerminalSize {
+            columns: 20,
+            screen_lines: 5,
+        });
         core.feed(b"\x1b[1;5HX");
         assert_eq!(row(&core, 0), "    X");
     }
 
     #[test]
     fn erase_in_line_clears_prior_content() {
-        let mut core = TerminalCore::new(TerminalSize { columns: 20, screen_lines: 5 });
+        let mut core = TerminalCore::new(TerminalSize {
+            columns: 20,
+            screen_lines: 5,
+        });
         core.feed(b"abcdef\x1b[1;1H\x1b[2K");
         assert_eq!(row(&core, 0), "");
     }
 
     #[test]
     fn feeding_in_two_chunks_matches_feeding_at_once() {
-        let mut split = TerminalCore::new(TerminalSize { columns: 20, screen_lines: 5 });
+        let mut split = TerminalCore::new(TerminalSize {
+            columns: 20,
+            screen_lines: 5,
+        });
         // Escape sequence deliberately cut in half across the two chunks: the
         // parser must hold state between calls, since a PTY read can land
         // anywhere in a sequence.
         split.feed(b"\x1b[1;");
         split.feed(b"5HX");
 
-        let mut whole = TerminalCore::new(TerminalSize { columns: 20, screen_lines: 5 });
+        let mut whole = TerminalCore::new(TerminalSize {
+            columns: 20,
+            screen_lines: 5,
+        });
         whole.feed(b"\x1b[1;5HX");
 
         assert_eq!(split.row_text(0), whole.row_text(0));
@@ -291,20 +309,30 @@ mod tests {
 
     #[test]
     fn the_cursor_cell_is_marked_inverse_so_the_shader_paints_a_block() {
-        let mut core = TerminalCore::new(TerminalSize { columns: 4, screen_lines: 1 });
+        let mut core = TerminalCore::new(TerminalSize {
+            columns: 4,
+            screen_lines: 1,
+        });
         core.feed(b"ab");
         core.refresh_snapshot();
 
         let inverse = u32::from(Flags::INVERSE.bits());
         let flags_of = |cell: usize| core.snapshot()[cell * WORDS_PER_CELL + 3];
         // Cursor sits on column 2, just past the typed text.
-        assert_eq!(flags_of(2) & inverse, inverse, "cursor cell must be inverse");
+        assert_eq!(
+            flags_of(2) & inverse,
+            inverse,
+            "cursor cell must be inverse"
+        );
         assert_eq!(flags_of(0) & inverse, 0, "other cells must be untouched");
     }
 
     #[test]
     fn a_hidden_cursor_leaves_every_cell_untouched() {
-        let mut core = TerminalCore::new(TerminalSize { columns: 4, screen_lines: 1 });
+        let mut core = TerminalCore::new(TerminalSize {
+            columns: 4,
+            screen_lines: 1,
+        });
         // DECTCEM off — Neovim hides the cursor while repainting.
         core.feed(b"ab\x1b[?25l");
         core.refresh_snapshot();
@@ -317,7 +345,10 @@ mod tests {
 
     #[test]
     fn sgr_attributes_reach_the_packed_snapshot() {
-        let mut core = TerminalCore::new(TerminalSize { columns: 4, screen_lines: 1 });
+        let mut core = TerminalCore::new(TerminalSize {
+            columns: 4,
+            screen_lines: 1,
+        });
         core.feed(b"\x1b[1;38;2;18;52;86mA");
         core.refresh_snapshot();
         let packed = core.snapshot();
@@ -334,12 +365,21 @@ mod tests {
 
     #[test]
     fn resize_changes_the_reported_dimensions() {
-        let mut core = TerminalCore::new(TerminalSize { columns: 20, screen_lines: 5 });
-        core.resize(TerminalSize { columns: 40, screen_lines: 10 });
+        let mut core = TerminalCore::new(TerminalSize {
+            columns: 20,
+            screen_lines: 5,
+        });
+        core.resize(TerminalSize {
+            columns: 40,
+            screen_lines: 10,
+        });
         assert_eq!(core.columns(), 40);
         assert_eq!(core.screen_lines(), 10);
         core.refresh_snapshot();
-        assert_eq!(core.snapshot().len(), 40 * 10 * crate::snapshot::WORDS_PER_CELL);
+        assert_eq!(
+            core.snapshot().len(),
+            40 * 10 * crate::snapshot::WORDS_PER_CELL
+        );
     }
 
     #[test]
@@ -347,14 +387,20 @@ mod tests {
         // A hidden or collapsed panel can legitimately report 0×0. Neither the
         // grid nor the renderer can work with that, and panicking on a resize
         // would take the whole panel down — clamp instead, visibly.
-        let core = TerminalCore::new(TerminalSize { columns: 0, screen_lines: 0 });
+        let core = TerminalCore::new(TerminalSize {
+            columns: 0,
+            screen_lines: 0,
+        });
         assert_eq!(core.columns(), 1);
         assert_eq!(core.screen_lines(), 1);
     }
 
     #[test]
     fn cursor_position_follows_the_written_text() {
-        let mut core = TerminalCore::new(TerminalSize { columns: 20, screen_lines: 5 });
+        let mut core = TerminalCore::new(TerminalSize {
+            columns: 20,
+            screen_lines: 5,
+        });
         core.feed(b"\x1b[3;7Habc");
         // CUP is 1-indexed; the cursor ends three columns past where it landed.
         assert_eq!(core.cursor_line(), 2);
@@ -363,7 +409,10 @@ mod tests {
 
     #[test]
     fn application_cursor_mode_follows_the_decckm_escape_sequence() {
-        let mut core = TerminalCore::new(TerminalSize { columns: 20, screen_lines: 5 });
+        let mut core = TerminalCore::new(TerminalSize {
+            columns: 20,
+            screen_lines: 5,
+        });
         assert!(!core.application_cursor(), "DECCKM starts off");
 
         core.feed(b"\x1b[?1h");
@@ -375,7 +424,10 @@ mod tests {
 
     #[test]
     fn the_snapshot_buffer_is_reused_across_frames() {
-        let mut core = TerminalCore::new(TerminalSize { columns: 10, screen_lines: 3 });
+        let mut core = TerminalCore::new(TerminalSize {
+            columns: 10,
+            screen_lines: 3,
+        });
         core.feed(b"abc");
         core.refresh_snapshot();
         let first_ptr = core.snapshot().as_ptr();
@@ -392,7 +444,10 @@ mod tests {
 
     #[test]
     fn refreshing_updates_the_buffer_contents() {
-        let mut core = TerminalCore::new(TerminalSize { columns: 10, screen_lines: 1 });
+        let mut core = TerminalCore::new(TerminalSize {
+            columns: 10,
+            screen_lines: 1,
+        });
         core.feed(b"a");
         core.refresh_snapshot();
         assert_eq!(char::from_u32(core.snapshot()[0]), Some('a'));
@@ -404,23 +459,41 @@ mod tests {
 
     #[test]
     fn the_snapshot_is_sized_for_the_whole_viewport() {
-        let mut core = TerminalCore::new(TerminalSize { columns: 10, screen_lines: 3 });
+        let mut core = TerminalCore::new(TerminalSize {
+            columns: 10,
+            screen_lines: 3,
+        });
         core.refresh_snapshot();
-        assert_eq!(core.snapshot().len(), 10 * 3 * crate::snapshot::WORDS_PER_CELL);
+        assert_eq!(
+            core.snapshot().len(),
+            10 * 3 * crate::snapshot::WORDS_PER_CELL
+        );
     }
 
     #[test]
     fn resizing_resizes_the_snapshot_buffer() {
-        let mut core = TerminalCore::new(TerminalSize { columns: 10, screen_lines: 3 });
+        let mut core = TerminalCore::new(TerminalSize {
+            columns: 10,
+            screen_lines: 3,
+        });
         core.refresh_snapshot();
-        core.resize(TerminalSize { columns: 20, screen_lines: 5 });
+        core.resize(TerminalSize {
+            columns: 20,
+            screen_lines: 5,
+        });
         core.refresh_snapshot();
-        assert_eq!(core.snapshot().len(), 20 * 5 * crate::snapshot::WORDS_PER_CELL);
+        assert_eq!(
+            core.snapshot().len(),
+            20 * 5 * crate::snapshot::WORDS_PER_CELL
+        );
     }
 
     #[test]
     fn writing_one_line_reports_only_that_line_as_damaged() {
-        let mut core = TerminalCore::new(TerminalSize { columns: 20, screen_lines: 5 });
+        let mut core = TerminalCore::new(TerminalSize {
+            columns: 20,
+            screen_lines: 5,
+        });
         let _ = core.take_damage();
 
         core.feed(b"\x1b[3;1Hxyz");
@@ -436,17 +509,27 @@ mod tests {
 
     #[test]
     fn damage_is_cleared_once_taken() {
-        let mut core = TerminalCore::new(TerminalSize { columns: 20, screen_lines: 5 });
+        let mut core = TerminalCore::new(TerminalSize {
+            columns: 20,
+            screen_lines: 5,
+        });
         let _ = core.take_damage();
 
         core.feed(b"hello");
-        assert!(!core.take_damage().is_empty(), "the write should be damaged");
+        assert!(
+            !core.take_damage().is_empty(),
+            "the write should be damaged"
+        );
 
         // Term::damage() always marks the cursor position as damaged (alacritty
         // behavior). The third call returns exactly one triplet — the cursor at
         // (line 0, col 5) — proving no stale damage from the feed remains.
         let remaining = core.take_damage();
-        assert_eq!(remaining.len(), 3, "third call returns exactly cursor damage");
+        assert_eq!(
+            remaining.len(),
+            3,
+            "third call returns exactly cursor damage"
+        );
         assert_eq!(remaining[0], 0, "cursor line");
         assert_eq!(remaining[1], 5, "cursor column");
         assert_eq!(remaining[2], 5, "cursor column (inclusive)");
@@ -454,10 +537,16 @@ mod tests {
 
     #[test]
     fn a_resize_reports_the_whole_grid_as_damaged() {
-        let mut core = TerminalCore::new(TerminalSize { columns: 20, screen_lines: 5 });
+        let mut core = TerminalCore::new(TerminalSize {
+            columns: 20,
+            screen_lines: 5,
+        });
         let _ = core.take_damage();
 
-        core.resize(TerminalSize { columns: 30, screen_lines: 8 });
+        core.resize(TerminalSize {
+            columns: 30,
+            screen_lines: 8,
+        });
         let damage = core.take_damage();
 
         assert_eq!(damage.len(), 8 * 3);
@@ -470,7 +559,10 @@ mod tests {
     fn mouse_modes_follow_the_escape_sequences_that_set_them() {
         use crate::input::MouseReporting;
 
-        let mut core = TerminalCore::new(TerminalSize { columns: 20, screen_lines: 5 });
+        let mut core = TerminalCore::new(TerminalSize {
+            columns: 20,
+            screen_lines: 5,
+        });
         assert_eq!(core.mouse_reporting(), MouseReporting::None);
         assert!(!core.sgr_mouse());
 

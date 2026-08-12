@@ -1,0 +1,26 @@
+{
+  "font": { "family": "JetBrains Mono", "size": 13.0 },
+  "colors": {
+    "black": "#f00000",
+    "red": "#f00001",
+    "green": "#f00002",
+    "yellow": "#f00003",
+    "blue": "#f00004",
+    "magenta": "#f00005",
+    "cyan": "#f00006",
+    "white": "#f00007",
+    "brightBlack": "#f00008",
+    "brightRed": "#f00009",
+    "brightGreen": "#f0000a",
+    "brightYellow": "#f0000b",
+    "brightBlue": "#f0000c",
+    "brightMagenta": "#f0000d",
+    "brightCyan": "#f0000e",
+    "brightWhite": "#f0000f",
+    "foreground": "#fallbf",
+    "background": "#fallbb",
+    "cursor": "#fallbc"
+  },
+  "cursor": { "style": "block", "blink": false },
+  "scrollback": 10000
+}

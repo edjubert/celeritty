@@ -205,4 +205,9 @@ Node 22.18.
 
 ## License
 
-Apache-2.0.
+Apache-2.0 — see [`LICENSE`](LICENSE).
+
+`crates/terminal-core/vendor/alacritty_terminal/` is a patched copy of
+[`alacritty_terminal`](https://github.com/alacritty/alacritty), Copyright The
+Alacritty Project, also Apache-2.0. It keeps its own licence file alongside
+the vendored source.

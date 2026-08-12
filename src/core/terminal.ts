@@ -34,12 +34,7 @@ import {
   toEncoderButton,
 } from "./pointer";
 import { applySelectionHighlight } from "./selection-highlight";
-import type {
-  CellPoint,
-  TerminalEvent,
-  TerminalEventMap,
-  TerminalOptions,
-} from "./types";
+import type { CellPoint, TerminalEvent, TerminalEventMap, TerminalOptions } from "./types";
 import type { TerminalTransport } from "../transport/types";
 import { EngineTerminal, encodeKey, engineMemory, loadEngine } from "./wasm";
 
@@ -146,7 +141,10 @@ export class Terminal {
 
   // ------------------------------------------------------------------- events
 
-  on<E extends TerminalEvent>(event: E, listener: (payload: TerminalEventMap[E]) => void): () => void {
+  on<E extends TerminalEvent>(
+    event: E,
+    listener: (payload: TerminalEventMap[E]) => void,
+  ): () => void {
     const set = this.#listeners.get(event) ?? new Set<AnyListener>();
     set.add(listener as AnyListener);
     this.#listeners.set(event, set);
@@ -360,13 +358,21 @@ export class Terminal {
           ? sendPointerToEngine(engine, atlas, hostBounds, dpr, kind, button, event)
           : false,
       dragging: this.#dragging,
-      setDragging: (v) => { this.#dragging = v; },
+      setDragging: (v) => {
+        this.#dragging = v;
+      },
       selectionStart: this.#selectionStart,
-      setSelectionStart: (v) => { this.#selectionStart = v; },
+      setSelectionStart: (v) => {
+        this.#selectionStart = v;
+      },
       selectionEnd: this.#selectionEnd,
-      setSelectionEnd: (v) => { this.#selectionEnd = v; },
+      setSelectionEnd: (v) => {
+        this.#selectionEnd = v;
+      },
       dirty: this.#dirty,
-      setDirty: (v) => { this.#dirty = v; },
+      setDirty: (v) => {
+        this.#dirty = v;
+      },
       host: this.#host,
       linkAt: (event) => {
         if (engine === undefined || atlas === undefined) return null;
@@ -410,18 +416,16 @@ export class Terminal {
   }
 
   #handleMouseUp(event: MouseEvent): void {
-    handleMouseUp(
-      this.#buildState(),
-      event,
-      toEncoderButton,
-      MOUSE_RELEASE,
-      () => this.getSelection(),
+    handleMouseUp(this.#buildState(), event, toEncoderButton, MOUSE_RELEASE, () =>
+      this.getSelection(),
     );
   }
 
   #handleWheel(event: WheelEvent): void {
     const state = this.#buildState();
-    handleWheel(state, event, MOUSE_SCROLL_UP, MOUSE_SCROLL_DOWN, (delta) => this.scrollLines(delta));
+    handleWheel(state, event, MOUSE_SCROLL_UP, MOUSE_SCROLL_DOWN, (delta) =>
+      this.scrollLines(delta),
+    );
   }
 
   #clearSelection(): void {

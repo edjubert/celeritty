@@ -286,8 +286,8 @@ pub fn resolve_alacritty_toml_js(source: &str, fallback: JsValue) -> Result<JsVa
         serde_wasm_bindgen::from_value(fallback)
             .map_err(|e| JsValue::from_str(&format!("invalid fallback palette: {e}")))?;
 
-    let options = alacritty_config::options::resolve(source, &fallback)
-        .map_err(|e| JsValue::from_str(&e))?;
+    let options =
+        alacritty_config::options::resolve(source, &fallback).map_err(|e| JsValue::from_str(&e))?;
 
     serde_wasm_bindgen::to_value(&options).map_err(|e| JsValue::from_str(&e.to_string()))
 }

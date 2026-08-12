@@ -88,19 +88,15 @@ fn palette_from(config: &AlacrittyConfig, fallback: &TerminalPalette) -> Termina
         magenta: normal.map_or_else(|| fallback.magenta.clone(), |p| p.magenta.clone()),
         cyan: normal.map_or_else(|| fallback.cyan.clone(), |p| p.cyan.clone()),
         white: normal.map_or_else(|| fallback.white.clone(), |p| p.white.clone()),
-        bright_black: bright
-            .map_or_else(|| fallback.bright_black.clone(), |p| p.black.clone()),
+        bright_black: bright.map_or_else(|| fallback.bright_black.clone(), |p| p.black.clone()),
         bright_red: bright.map_or_else(|| fallback.bright_red.clone(), |p| p.red.clone()),
-        bright_green: bright
-            .map_or_else(|| fallback.bright_green.clone(), |p| p.green.clone()),
-        bright_yellow: bright
-            .map_or_else(|| fallback.bright_yellow.clone(), |p| p.yellow.clone()),
+        bright_green: bright.map_or_else(|| fallback.bright_green.clone(), |p| p.green.clone()),
+        bright_yellow: bright.map_or_else(|| fallback.bright_yellow.clone(), |p| p.yellow.clone()),
         bright_blue: bright.map_or_else(|| fallback.bright_blue.clone(), |p| p.blue.clone()),
         bright_magenta: bright
             .map_or_else(|| fallback.bright_magenta.clone(), |p| p.magenta.clone()),
         bright_cyan: bright.map_or_else(|| fallback.bright_cyan.clone(), |p| p.cyan.clone()),
-        bright_white: bright
-            .map_or_else(|| fallback.bright_white.clone(), |p| p.white.clone()),
+        bright_white: bright.map_or_else(|| fallback.bright_white.clone(), |p| p.white.clone()),
         foreground: config
             .colors
             .primary
@@ -129,10 +125,7 @@ fn palette_from(config: &AlacrittyConfig, fallback: &TerminalPalette) -> Termina
 /// (size 11.25, history 10 000, `Block`, `Off`) and those are baked in, but it
 /// documents no default palette, and inventing sixteen ANSI values would ship
 /// a theme nobody chose.
-pub fn resolve(
-    toml_source: &str,
-    fallback: &TerminalPalette,
-) -> Result<TerminalOptions, String> {
+pub fn resolve(toml_source: &str, fallback: &TerminalPalette) -> Result<TerminalOptions, String> {
     let config = parse_alacritty_source(toml_source)?;
 
     Ok(TerminalOptions {

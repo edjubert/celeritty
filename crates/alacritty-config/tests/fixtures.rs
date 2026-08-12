@@ -26,7 +26,10 @@ fn check(name: &str) {
 
     let actual = resolve(&source, &fallback()).unwrap();
 
-    assert_eq!(actual, expected, "fixture {name} did not resolve as expected");
+    assert_eq!(
+        actual, expected,
+        "fixture {name} did not resolve as expected"
+    );
 }
 
 #[test]

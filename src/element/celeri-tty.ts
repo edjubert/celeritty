@@ -48,11 +48,13 @@ export class CeleriTtyElement extends HTMLElement {
       terminal.detach();
       return;
     }
-    void terminal.ready.then(() => terminal.attach(value)).catch(() => {
-      // `ready` rejecting is already reported through the error event below;
-      // swallowing it here only prevents an unhandled rejection for the
-      // attach path specifically.
-    });
+    void terminal.ready
+      .then(() => terminal.attach(value))
+      .catch(() => {
+        // `ready` rejecting is already reported through the error event below;
+        // swallowing it here only prevents an unhandled rejection for the
+        // attach path specifically.
+      });
   }
 
   /** The underlying class, for anything the element does not surface. */
@@ -84,9 +86,11 @@ export class CeleriTtyElement extends HTMLElement {
 
     const transport = this.#transport;
     if (transport !== undefined) {
-      void terminal.ready.then(() => terminal.attach(transport)).catch(() => {
-        // Reported by the `ready.catch` above; nothing to add here.
-      });
+      void terminal.ready
+        .then(() => terminal.attach(transport))
+        .catch(() => {
+          // Reported by the `ready.catch` above; nothing to add here.
+        });
     }
   }
 

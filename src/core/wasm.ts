@@ -47,5 +47,4 @@ export function engineMemory(): ArrayBuffer {
   return memory.buffer;
 }
 
-
 export { Terminal as EngineTerminal, encodeKey, encodeMouse };

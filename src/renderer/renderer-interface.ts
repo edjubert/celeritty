@@ -53,7 +53,4 @@ export interface Renderer {
  * Builds a renderer for a canvas. Asynchronous because acquiring a GPU
  * adapter and device is asynchronous; a constructor cannot do it.
  */
-export type RendererFactory = (
-  canvas: HTMLCanvasElement,
-  atlas: AtlasTexture,
-) => Promise<Renderer>;
+export type RendererFactory = (canvas: HTMLCanvasElement, atlas: AtlasTexture) => Promise<Renderer>;

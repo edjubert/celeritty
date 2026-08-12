@@ -18,11 +18,7 @@ export interface InputHandlerState {
   emit: (event: string, payload: unknown) => void;
   clearSelection: () => void;
   cellAt: (event: MouseEvent) => CellPoint | null;
-  sendPointer: (
-    kind: number,
-    button: number,
-    event: MouseEvent | WheelEvent,
-  ) => boolean;
+  sendPointer: (kind: number, button: number, event: MouseEvent | WheelEvent) => boolean;
   dragging: boolean;
   setDragging: (v: boolean) => void;
   selectionStart: CellPoint | null;
@@ -45,13 +41,7 @@ export function sendPointerToEngine(
   button: number,
   event: MouseEvent | WheelEvent,
 ): boolean {
-  const target = pointerTarget(
-    engine,
-    hostBounds,
-    atlas!.cell,
-    dpr,
-    event,
-  );
+  const target = pointerTarget(engine, hostBounds, atlas!.cell, dpr, event);
   if (target === null) return false;
 
   const bytes = encodeMouse(
@@ -75,18 +65,30 @@ export function sendPointerToEngine(
 }
 
 /** Compute a cell position from a mouse event. */
-export function computeCellPoint(atlas: { cell: { width: number; height: number } }, event: MouseEvent): CellPoint | null {
+export function computeCellPoint(
+  atlas: { cell: { width: number; height: number } },
+  event: MouseEvent,
+): CellPoint | null {
   const bounds = event.currentTarget as HTMLElement | null;
   if (!bounds) return null;
   const dpr = window.devicePixelRatio;
   return {
-    column: Math.max(0, Math.floor(((event.clientX - bounds.getBoundingClientRect().left) * dpr) / atlas.cell.width)),
-    line: Math.max(0, Math.floor(((event.clientY - bounds.getBoundingClientRect().top) * dpr) / atlas.cell.height)),
+    column: Math.max(
+      0,
+      Math.floor(((event.clientX - bounds.getBoundingClientRect().left) * dpr) / atlas.cell.width),
+    ),
+    line: Math.max(
+      0,
+      Math.floor(((event.clientY - bounds.getBoundingClientRect().top) * dpr) / atlas.cell.height),
+    ),
   };
 }
 
 /** Get the URL under a pointer position, or `null`. */
-export function resolveLinkUrl(engine: InstanceType<typeof EngineTerminal>, cell: CellPoint): string | null {
+export function resolveLinkUrl(
+  engine: InstanceType<typeof EngineTerminal>,
+  cell: CellPoint,
+): string | null {
   const row = engine.rowText(cell.line - engine.displayOffset);
   return findLinkAtColumn(row, cell.column)?.url ?? null;
 }
@@ -175,10 +177,7 @@ export function handleMouseUp(
     state.setDirty(true);
 
     const moved =
-      start === null ||
-      end === null ||
-      start.line !== end.line ||
-      start.column !== end.column;
+      start === null || end === null || start.line !== end.line || start.column !== end.column;
 
     if (!moved) {
       const linkUrl = state.linkAt?.(event);

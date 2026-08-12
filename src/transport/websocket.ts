@@ -130,9 +130,7 @@ export class WebSocketTransport implements TerminalTransport {
       this.#emitClose(undefined);
       return;
     }
-    this.#emitClose(
-      event.reason === "" ? "the terminal connection was lost" : event.reason,
-    );
+    this.#emitClose(event.reason === "" ? "the terminal connection was lost" : event.reason);
   }
 
   #emitClose(reason: string | undefined): void {
@@ -151,7 +149,11 @@ function parseServerMessage(raw: string): ServerMessage | null {
   if (typeof parsed !== "object" || parsed === null) return null;
 
   const candidate = parsed as Record<string, unknown>;
-  if (candidate.type === "ready" && typeof candidate.columns === "number" && typeof candidate.rows === "number") {
+  if (
+    candidate.type === "ready" &&
+    typeof candidate.columns === "number" &&
+    typeof candidate.rows === "number"
+  ) {
     return { type: "ready", columns: candidate.columns, rows: candidate.rows };
   }
   if (candidate.type === "exit" && typeof candidate.code === "number") {

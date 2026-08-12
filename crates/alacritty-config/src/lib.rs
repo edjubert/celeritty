@@ -154,8 +154,11 @@ impl Default for ScrollingConfig {
 /// `~/.config/alacritty/alacritty.toml`. `None` only when the home directory
 /// itself cannot be resolved — no `$HOME`, no passwd entry.
 pub fn default_config_path() -> Option<PathBuf> {
-    dirs::home_dir()
-        .map(|home| home.join(".config").join("alacritty").join("alacritty.toml"))
+    dirs::home_dir().map(|home| {
+        home.join(".config")
+            .join("alacritty")
+            .join("alacritty.toml")
+    })
 }
 
 /// Parse TOML text. The browser path uses this — there is no file to read.
@@ -166,9 +169,7 @@ pub fn parse_alacritty_source(source: &str) -> Result<AlacrittyConfig, String> {
 /// Parse a file. `Ok(None)` when it does not exist: that is the common case,
 /// not an error. `Err` only when it exists and fails to parse, because then
 /// the user's real settings are silently not being honored.
-pub fn parse_alacritty_config(
-    path: &std::path::Path,
-) -> Result<Option<AlacrittyConfig>, String> {
+pub fn parse_alacritty_config(path: &std::path::Path) -> Result<Option<AlacrittyConfig>, String> {
     let raw = match std::fs::read_to_string(path) {
         Ok(raw) => raw,
         Err(e) if e.kind() == std::io::ErrorKind::NotFound => return Ok(None),
@@ -258,14 +259,8 @@ history = 50000
         let config = parse_alacritty_config(&path).unwrap().unwrap();
 
         assert_eq!(config.font.size, 13.0);
-        assert_eq!(
-            config.font.normal.family.as_deref(),
-            Some("JetBrains Mono")
-        );
-        assert_eq!(
-            config.colors.primary.background.as_deref(),
-            Some("#1a1b26")
-        );
+        assert_eq!(config.font.normal.family.as_deref(), Some("JetBrains Mono"));
+        assert_eq!(config.colors.primary.background.as_deref(), Some("#1a1b26"));
         assert_eq!(
             config.colors.normal.as_ref().map(|p| p.red.as_str()),
             Some("#f7768e")

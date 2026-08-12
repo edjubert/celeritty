@@ -6,11 +6,7 @@
  */
 
 import type { AtlasTexture, Renderer, RendererFactory, RendererGrid } from "./renderer-interface";
-import {
-  buildInstanceData,
-  ensureGlyphs,
-  FLOATS_PER_INSTANCE,
-} from "./instance-data";
+import { buildInstanceData, ensureGlyphs, FLOATS_PER_INSTANCE } from "./instance-data";
 import { buildPaletteBuffer, PALETTE_ENTRIES } from "./palette";
 import { TERMINAL_SHADER } from "./terminal-shader.wgsl";
 

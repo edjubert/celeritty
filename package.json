@@ -1,6 +1,6 @@
 {
   "name": "celeritty",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Terminal emulator for the web. ANSI parsing in Rust (alacritty_terminal) compiled to WebAssembly, rendered with WebGPU.",
   "keywords": [
     "terminal",

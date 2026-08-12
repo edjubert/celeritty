@@ -19,9 +19,6 @@ import { resolveAlacrittyToml as resolveRaw } from "../wasm/celeritty.js";
  * `loadEngine()` must have resolved first; this shares the terminal's wasm
  * module rather than loading a second one.
  */
-export function resolveAlacrittyToml(
-  source: string,
-  fallback: TerminalPalette,
-): TerminalOptions {
+export function resolveAlacrittyToml(source: string, fallback: TerminalPalette): TerminalOptions {
   return resolveRaw(source, fallback) as TerminalOptions;
 }

@@ -1,0 +1,48 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      # Trusted publishing: npm authenticates this workflow over OIDC, so
+      # there is no NPM_TOKEN secret to create, store or rotate. It has to be
+      # enabled once on the package's npm settings page, which requires the
+      # package to exist — so the first publish is manual (`npm publish`
+      # locally, with 2FA) and every release after it runs from here.
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: "1.85.0"
+          targets: wasm32-unknown-unknown
+
+      - uses: jetli/wasm-pack-action@v0.4.0
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22.18.0"
+          cache: pnpm
+          registry-url: "https://registry.npmjs.org"
+
+      - run: pnpm install --frozen-lockfile
+
+      # The same gates as CI: a tag must not publish what a pull request
+      # would have rejected.
+      - run: cargo test --workspace
+      - run: pnpm build
+      - run: pnpm ts-check
+      - run: pnpm lint
+      - run: pnpm test:ts
+
+      # No --access public: that flag only matters for scoped packages, and
+      # celeritty is unscoped and therefore public by default.
+      # --no-git-checks is required: pnpm otherwise refuses to publish from
+      # the detached HEAD a tag checkout produces.
+      - run: pnpm publish --no-git-checks

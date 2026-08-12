@@ -18,11 +18,22 @@
   },
   "license": "Apache-2.0",
   "type": "module",
-  "files": ["dist", "PROTOCOL.md"],
+  "files": [
+    "dist",
+    "PROTOCOL.md"
+  ],
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
+    },
+    "./element": {
+      "types": "./dist/element/index.d.ts",
+      "default": "./dist/element.js"
+    },
+    "./transport/websocket": {
+      "types": "./dist/transport/index.d.ts",
+      "default": "./dist/transport-websocket.js"
     }
   },
   "scripts": {
@@ -42,6 +53,7 @@
   "devDependencies": {
     "@types/node": "^22.10.0",
     "@webgpu/types": "^0.1.71",
+    "happy-dom": "^20.11.2",
     "knip": "^6.22.0",
     "oxfmt": "^0.56.0",
     "oxlint": "^1.71.0",

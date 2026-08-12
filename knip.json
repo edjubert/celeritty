@@ -2,6 +2,8 @@
   "$schema": "https://unpkg.com/knip@6/schema.json",
   "entry": [
     "src/index.ts",
+    "src/element/index.ts",
+    "src/transport/index.ts",
     "harness/main.ts",
     "vite.config.ts",
     "vite.harness.config.ts",

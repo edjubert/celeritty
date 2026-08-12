@@ -18,7 +18,7 @@ export const MOUSE_SCROLL_UP = 3;
 export const MOUSE_SCROLL_DOWN = 4;
 
 /** `MouseReporting::None` — the program wants no mouse events at all. */
-export const MOUSE_REPORTING_NONE = 0;
+const MOUSE_REPORTING_NONE = 0;
 
 /** The terminal flags the mouse encoder needs. Structural, so tests can stub it. */
 export interface MouseReportingState {
@@ -27,18 +27,6 @@ export interface MouseReportingState {
   readonly alternateScroll: boolean;
   readonly altScreen: boolean;
   readonly applicationCursor: boolean;
-}
-
-/** The slice of a DOM pointer or wheel event the encoder needs. */
-export interface PointerLikeEvent {
-  kind: number;
-  /** 0 none, 1 left, 2 middle, 3 right. */
-  button: number;
-  clientX: number;
-  clientY: number;
-  ctrlKey: boolean;
-  altKey: boolean;
-  shiftKey: boolean;
 }
 
 /** DOM buttons are 0/1/2 (left/middle/right); the encoder wants 1/2/3. */

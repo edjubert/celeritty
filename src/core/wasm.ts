@@ -47,5 +47,5 @@ export function engineMemory(): ArrayBuffer {
   return memory.buffer;
 }
 
-export type EngineTerminalConstructor = typeof Terminal;
+
 export { Terminal as EngineTerminal, encodeKey, encodeMouse };

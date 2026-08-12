@@ -6,7 +6,11 @@ export default defineConfig({
     outDir: "dist",
     emptyOutDir: true,
     lib: {
-      entry: { index: "src/index.ts" },
+      entry: {
+        index: "src/index.ts",
+        element: "src/element/index.ts",
+        "transport-websocket": "src/transport/index.ts",
+      },
       formats: ["es"],
     },
     rollupOptions: {

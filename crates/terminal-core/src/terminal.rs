@@ -179,6 +179,26 @@ impl TerminalCore {
         });
     }
 
+    /// Text between two grid points, inclusive. `start` must not be after
+    /// `end` (compare line first, then column) — alacritty_terminal's
+    /// `bounds_to_string` iterates `start.line..=end.line` and silently
+    /// returns an empty string if that range is empty, so a caller that
+    /// passes corners in the wrong order gets nothing back, not a panic or
+    /// an error. Normalize the two corners (top-left, bottom-right) before
+    /// calling this — typically in the mouse-drag code building the
+    /// selection, since a drag can go in any of four directions.
+    pub fn selected_text(
+        &self,
+        start_line: i32,
+        start_col: usize,
+        end_line: i32,
+        end_col: usize,
+    ) -> String {
+        let start = Point::new(Line(start_line), Column(start_col));
+        let end = Point::new(Line(end_line), Column(end_col));
+        self.term.bounds_to_string(start, end)
+    }
+
     /// One viewport row as text, trailing blanks trimmed. Reading aid for
     /// tests and debugging — the renderer uses `refresh_snapshot` + `snapshot`.
     pub fn row_text(&self, line: usize) -> String {
@@ -655,6 +675,27 @@ mod tests {
 
         core.reset_scroll();
         assert_eq!(core.display_offset(), 0);
+    }
+
+    #[test]
+    fn selected_text_extracts_a_single_line_range() {
+        let mut core = TerminalCore::new(TerminalSize { columns: 10, screen_lines: 2 });
+        core.feed(b"hello world");
+        assert_eq!(core.selected_text(0, 0, 0, 4), "hello");
+    }
+
+    #[test]
+    fn selected_text_spans_multiple_lines() {
+        let mut core = TerminalCore::new(TerminalSize { columns: 5, screen_lines: 2 });
+        core.feed(b"abc\r\ndef");
+        assert_eq!(core.selected_text(0, 0, 1, 2), "abc\ndef");
+    }
+
+    #[test]
+    fn selected_text_is_empty_when_corners_are_reversed() {
+        let mut core = TerminalCore::new(TerminalSize { columns: 10, screen_lines: 2 });
+        core.feed(b"hello");
+        assert_eq!(core.selected_text(0, 4, 0, 0), "");
     }
 
     #[test]

@@ -1,10 +1,24 @@
 {
-  "name": "@cadencr/cathode",
+  "name": "cathode-term",
   "version": "0.0.0",
-  "description": "Terminal component for the web, with a Rust/alacritty engine compiled to WebAssembly.",
+  "description": "Terminal emulator for the web. ANSI parsing in Rust (alacritty_terminal) compiled to WebAssembly, rendered with WebGPU.",
+  "keywords": [
+    "terminal",
+    "terminal-emulator",
+    "xterm",
+    "alacritty",
+    "webgpu",
+    "wasm",
+    "pty",
+    "custom-element"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/edjubert/cathode.git"
+  },
   "license": "Apache-2.0",
   "type": "module",
-  "files": ["dist"],
+  "files": ["dist", "PROTOCOL.md"],
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",

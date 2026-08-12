@@ -7,3 +7,15 @@
  */
 
 export * from "./renderer/index";
+export { Terminal } from "./core/terminal";
+export type {
+  TerminalOptions,
+  TerminalFont,
+  TerminalPalette,
+  TerminalCursor,
+  TerminalEvent,
+  TerminalEventMap,
+  CellPoint,
+} from "./core/types";
+export type { TerminalTransport } from "./transport/types";
+export type { GridSize } from "./renderer/grid-metrics";

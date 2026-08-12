@@ -12,3 +12,4 @@ export type {
 } from "./types";
 export { findLinkAtColumn } from "./link-detection";
 export type { DetectedLink } from "./link-detection";
+export { resolveAlacrittyToml } from "./config";

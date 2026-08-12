@@ -1,5 +1,5 @@
 {
-  "name": "cathode-term-example-local-shell",
+  "name": "celeritty-example-local-shell",
   "private": true,
   "type": "module",
   "scripts": {
@@ -7,7 +7,7 @@
     "dev": "vite"
   },
   "dependencies": {
-    "cathode-term": "^1.0.0"
+    "celeritty": "^1.0.0"
   },
   "devDependencies": {
     "node-pty": "^1.1.0",

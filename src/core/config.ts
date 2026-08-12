@@ -7,7 +7,7 @@
  */
 
 import type { TerminalOptions, TerminalPalette } from "./types";
-import { resolveAlacrittyToml as resolveRaw } from "../wasm/cathode.js";
+import { resolveAlacrittyToml as resolveRaw } from "../wasm/celeritty.js";
 
 /**
  * Resolve TOML text into terminal options.

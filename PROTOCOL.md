@@ -1,7 +1,7 @@
-# cathode-term reference transport protocol
+# celeritty reference transport protocol
 
 What a backend must do to work with `WebSocketTransport`, the optional
-transport shipped with cathode-term.
+transport shipped with celeritty.
 
 **This protocol is optional.** The component itself has no network code — it
 takes any object satisfying `TerminalTransport`. A host with its own protocol

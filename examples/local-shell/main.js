@@ -1,5 +1,5 @@
-import "cathode-term/element";
-import { WebSocketTransport } from "cathode-term/transport/websocket";
+import "celeritty/element";
+import { WebSocketTransport } from "celeritty/transport/websocket";
 
 // The xterm default palette. Any 19 colours work; the component applies what
 // it is given and resolves nothing.

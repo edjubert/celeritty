@@ -1,4 +1,4 @@
-# cathode-term
+# celeritty
 
 Terminal emulator for the web. ANSI parsing runs in Rust compiled to
 WebAssembly (a vendored `alacritty_terminal`); the grid is drawn with WebGPU.
@@ -14,7 +14,7 @@ transport.
 ## Install
 
 ```bash
-pnpm add cathode-term
+pnpm add celeritty
 ```
 
 ## Example
@@ -24,8 +24,8 @@ A complete, runnable client and server are in
 
 ```js
 // main.js
-import "cathode-term/element";
-import { WebSocketTransport } from "cathode-term/transport/websocket";
+import "celeritty/element";
+import { WebSocketTransport } from "celeritty/transport/websocket";
 
 const term = document.getElementById("term");
 
@@ -82,7 +82,7 @@ new WebSocketServer({ port: 8080 }).on("connection", (socket) => {
 ## Element
 
 ```html
-<cathode-term font-family="JetBrains Mono" font-size="13"></cathode-term>
+<celeri-tty font-family="JetBrains Mono" font-size="13"></celeri-tty>
 ```
 
 | Attribute | Default |
@@ -103,18 +103,19 @@ new WebSocketServer({ port: 8080 }).on("connection", (socket) => {
 | `resize` | `{ columns, lines }` |
 | `selection-change` | `string \| null` |
 | `link-activate` | `{ url, modifiers: { ctrl, alt, shift, meta } }` |
+| `link-hover` | `string \| null` — the URL under the pointer, or `null` on leave |
 | `error` | `Error` |
 
 Attributes cover font and scrollback only. A page that never assigns
 `options` gets no colours.
 
-Importing `cathode-term/element` registers the tag. Importing the package
+Importing `celeritty/element` registers the tag. Importing the package
 root does not.
 
 ## Class
 
 ```ts
-import { Terminal } from "cathode-term";
+import { Terminal } from "celeritty";
 
 const term = new Terminal(document.getElementById("host"), options);
 await term.ready;
@@ -157,7 +158,7 @@ which source won, and which overrides applied, is the host's decision.
 To resolve an `alacritty.toml`:
 
 ```ts
-import { loadEngine, resolveAlacrittyToml } from "cathode-term";
+import { loadEngine, resolveAlacrittyToml } from "celeritty";
 
 await loadEngine();
 const options = resolveAlacrittyToml(tomlText, fallbackPalette);

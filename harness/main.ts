@@ -8,7 +8,7 @@
  * whole path: keyboard → bytes → parser → grid → GPU.
  */
 
-import init, { type InitOutput, Terminal, encodeKey } from "../src/wasm/cathode.js";
+import init, { type InitOutput, Terminal, encodeKey } from "../src/wasm/celeritty.js";
 import {
   cellAtPixel,
   GlyphAtlas,

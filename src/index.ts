@@ -1,5 +1,5 @@
 /**
- * Public surface of cathode.
+ * Public surface of celeritty.
  *
  * Everything a consumer can import from the package root is re-exported here.
  * Deep imports into `src/` are not part of the contract and are not covered

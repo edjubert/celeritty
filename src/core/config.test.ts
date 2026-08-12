@@ -16,7 +16,7 @@ const fallback = JSON.parse(read("fallback.json")) as TerminalPalette;
 beforeAll(async () => {
   // vitest rewrites import.meta.url to a dead dev-server address, so the
   // module's own URL resolution cannot work here — pass the bytes instead.
-  await loadEngine(readFileSync(join(import.meta.dirname, "..", "wasm", "cathode_bg.wasm")));
+  await loadEngine(readFileSync(join(import.meta.dirname, "..", "wasm", "celeritty_bg.wasm")));
 });
 
 describe.each(["minimal", "no-scrolling", "full-theme"])("fixture %s", (name) => {

@@ -6,8 +6,8 @@
  * committed.
  */
 
-import init, { Terminal, encodeKey, encodeMouse } from "../wasm/cathode.js";
-import type { InitInput } from "../wasm/cathode.js";
+import init, { Terminal, encodeKey, encodeMouse } from "../wasm/celeritty.js";
+import type { InitInput } from "../wasm/celeritty.js";
 
 let initialized: Promise<void> | undefined;
 let memory: WebAssembly.Memory | undefined;

@@ -8,7 +8,7 @@
  * whole path: keyboard → bytes → parser → grid → GPU.
  */
 
-import init, { type InitOutput, Terminal, encodeKey } from "../pkg/terminal_core.js";
+import init, { type InitOutput, Terminal, encodeKey } from "../src/wasm/cathode.js";
 import {
   cellAtPixel,
   GlyphAtlas,
@@ -16,7 +16,7 @@ import {
   pixelSizeFor,
   TerminalRenderer,
   type FontSpec,
-} from "../renderer/index";
+} from "../src/renderer/index";
 
 const THEMES: Record<string, Map<number, string>> = {
   dark: new Map([

@@ -68,25 +68,6 @@ export interface CellPoint {
   column: number;
 }
 
-/**
- * Events a terminal emits. There is deliberately no `bell` and no `title`:
- * the wasm façade exposes neither, and declaring an event that never fires
- * would be a lie in the type. Plan 05 adds `link-activate`.
- */
-export interface TerminalEventMap {
-  /** Bytes headed for the PTY, already encoded. */
-  data: Uint8Array;
-  resize: GridSize;
-  /** The selected text, or `null` when the selection was cleared. */
-  "selection-change": string | null;
-  /**
-   * A runtime failure the host must surface. Programming errors — calling a
-   * method after `dispose`, passing malformed options — throw synchronously
-   * instead.
-   */
-  error: Error;
-}
-
 /** Modifier keys held when a link was activated. */
 export interface LinkModifiers {
   ctrl: boolean;
@@ -108,7 +89,7 @@ export interface LinkActivation {
 /**
  * Events a terminal emits. There is deliberately no `bell` and no `title`:
  * the wasm façade exposes neither, and declaring an event that never fires
- * would be a lie in the type. Plan 05 adds `link-activate`.
+ * would be a lie in the type.
  */
 export interface TerminalEventMap {
   /** Bytes headed for the PTY, already encoded. */
@@ -121,6 +102,13 @@ export interface TerminalEventMap {
    * whether and how.
    */
   "link-activate": LinkActivation;
+  /**
+   * The URL under the pointer, or `null` when it left the last one. A host
+   * driving a native (out-of-process) context menu needs this pushed as it
+   * changes — polling `getSelection()`-style has no equivalent for "what's
+   * under the cursor right now" between events.
+   */
+  "link-hover": string | null;
   /**
    * A runtime failure the host must surface. Programming errors — calling a
    * method after `dispose`, passing malformed options — throw synchronously

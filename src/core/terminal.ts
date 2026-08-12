@@ -387,7 +387,12 @@ export class Terminal {
       state,
       event,
       MOUSE_MOVE,
-      (url) => { this.#host.style.cursor = url === null ? "" : "pointer"; },
+      // Only called by handleMouseMove when the hovered URL actually
+      // changed since the previous move event — no extra gating needed here.
+      (url) => {
+        this.#host.style.cursor = url === null ? "" : "pointer";
+        this.#emit("link-hover", url);
+      },
       (event) => {
         const engine = this.#engine;
         const atlas = this.#atlas;

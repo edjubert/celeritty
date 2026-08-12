@@ -1,0 +1,19 @@
+[package]
+name = "alacritty-config"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish = false
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+toml = "0.8"
+dirs = "5"
+
+[dev-dependencies]
+tempfile = "3"
+serde_json = "1"
+
+[lints]
+workspace = true

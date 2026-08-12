@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["crates/terminal-core"]
+members = ["crates/terminal-core", "crates/alacritty-config"]
 # Vendored upstream copy, patched for the wasm target. It keeps its own
 # manifest and must not inherit this workspace's lints or edition.
 exclude = ["crates/terminal-core/vendor/alacritty_terminal"]

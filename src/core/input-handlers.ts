@@ -67,20 +67,14 @@ export function sendPointerToEngine(
 /** Compute a cell position from a mouse event. */
 export function computeCellPoint(
   atlas: { cell: { width: number; height: number } },
+  hostBounds: () => DOMRect,
   event: MouseEvent,
 ): CellPoint | null {
-  const bounds = event.currentTarget as HTMLElement | null;
-  if (!bounds) return null;
+  const bounds = hostBounds();
   const dpr = window.devicePixelRatio;
   return {
-    column: Math.max(
-      0,
-      Math.floor(((event.clientX - bounds.getBoundingClientRect().left) * dpr) / atlas.cell.width),
-    ),
-    line: Math.max(
-      0,
-      Math.floor(((event.clientY - bounds.getBoundingClientRect().top) * dpr) / atlas.cell.height),
-    ),
+    column: Math.max(0, Math.floor(((event.clientX - bounds.left) * dpr) / atlas.cell.width)),
+    line: Math.max(0, Math.floor(((event.clientY - bounds.top) * dpr) / atlas.cell.height)),
   };
 }
 

@@ -42,6 +42,7 @@ type AnyListener = (payload: never) => void;
 
 export class Terminal {
   readonly #host: HTMLElement;
+  readonly #hostBounds = (): DOMRect => this.#host.getBoundingClientRect();
   readonly #canvas: HTMLCanvasElement;
   readonly #createRenderer: RendererFactory;
   readonly #listeners = new Map<TerminalEvent, Set<AnyListener>>();
@@ -301,7 +302,7 @@ export class Terminal {
     const engine = this.#engine;
     if (atlas === undefined || engine === undefined) return;
 
-    const bounds = this.#host.getBoundingClientRect();
+    const bounds = this.#hostBounds();
     const measured = measureSurface(bounds, atlas.cell, window.devicePixelRatio);
     if (measured === null) return;
 
@@ -345,17 +346,16 @@ export class Terminal {
   #buildState(): InputHandlerState {
     const engine = this.#engine;
     const atlas = this.#atlas;
-    const hostBounds = () => this.#host.getBoundingClientRect();
     const dpr = window.devicePixelRatio;
 
     return {
       engine,
       emit: (event, payload) => this.#emit(event as TerminalEvent, payload as never),
       clearSelection: () => this.#clearSelection(),
-      cellAt: (event) => (atlas ? computeCellPoint(atlas, event) : null),
+      cellAt: (event) => (atlas ? computeCellPoint(atlas, this.#hostBounds, event) : null),
       sendPointer: (kind, button, event) =>
         engine !== undefined && atlas !== undefined
-          ? sendPointerToEngine(engine, atlas, hostBounds, dpr, kind, button, event)
+          ? sendPointerToEngine(engine, atlas, this.#hostBounds, dpr, kind, button, event)
           : false,
       dragging: this.#dragging,
       setDragging: (v) => {
@@ -376,7 +376,7 @@ export class Terminal {
       host: this.#host,
       linkAt: (event) => {
         if (engine === undefined || atlas === undefined) return null;
-        const cell = computeCellPoint(atlas, event);
+        const cell = computeCellPoint(atlas, this.#hostBounds, event);
         if (cell === null) return null;
         return resolveLinkUrl(engine, cell);
       },
@@ -403,14 +403,14 @@ export class Terminal {
         const engine = this.#engine;
         const atlas = this.#atlas;
         if (engine === undefined || atlas === undefined) return null;
-        const cell = computeCellPoint(atlas, event);
+        const cell = computeCellPoint(atlas, this.#hostBounds, event);
         if (cell === null) return null;
         return resolveLinkUrl(engine, cell);
       },
       { current: this.#hoveredLink },
     );
     const atlas = this.#atlas;
-    const cell = atlas ? computeCellPoint(atlas, event) : null;
+    const cell = atlas ? computeCellPoint(atlas, this.#hostBounds, event) : null;
     const url = cell ? resolveLinkUrl(this.#engine!, cell) : null;
     this.#hoveredLink = url;
   }

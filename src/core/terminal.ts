@@ -138,6 +138,8 @@ export class Terminal {
     this.#host.style.cursor = "";
     this.detach();
     this.#listeners.clear();
+    this.#engine?.free();
+    this.#engine = undefined;
   }
 
   // ------------------------------------------------------------------- events

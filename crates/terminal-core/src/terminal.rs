@@ -202,6 +202,9 @@ impl TerminalCore {
     /// One viewport row as text, trailing blanks trimmed. Reading aid for
     /// tests and debugging — the renderer uses `refresh_snapshot` + `snapshot`.
     pub fn row_text(&self, line: usize) -> String {
+        if line >= self.term.screen_lines() {
+            return String::new();
+        }
         let grid = self.term.grid();
         let line = Line(line as i32);
         let mut text = String::with_capacity(self.columns());
@@ -718,5 +721,22 @@ mod tests {
 
         core.set_scrollback_lines(2);
         assert_eq!(core.max_scroll(), 2);
+    }
+
+    #[test]
+    fn row_text_out_of_bounds_returns_empty_instead_of_panicking() {
+        let core = TerminalCore::new(TerminalSize {
+            columns: 10,
+            screen_lines: 5,
+        });
+        // One past the last valid line (0..5) — this used to index the grid
+        // out of bounds and panic; a stray mouse position below the last
+        // rendered row produces exactly this from the JS side.
+        assert_eq!(core.row_text(5), "");
+        // A very large value, matching what a negative JS number becomes
+        // after wasm-bindgen coerces it to `usize` at the FFI boundary
+        // (`cell.line - engine.displayOffset` can go negative when scrolled
+        // back in history).
+        assert_eq!(core.row_text(usize::MAX), "");
     }
 }

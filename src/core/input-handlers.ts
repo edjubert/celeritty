@@ -31,7 +31,14 @@ export interface InputHandlerState {
   linkAt: (event: MouseEvent) => string | null | undefined;
 }
 
-/** Send pointer events to the wasm engine. Returns `true` when handled. */
+/**
+ * Send pointer events to the wasm engine. Returns `true` when handled.
+ *
+ * `emitData` carries the encoded sequence out the same way keystrokes leave,
+ * via the `data` event. Without it the bytes are computed and dropped, so a
+ * program that asked for mouse reporting (Neovim, a pager, anything using the
+ * alternate screen) never hears about the pointer at all.
+ */
 export function sendPointerToEngine(
   engine: InstanceType<typeof EngineTerminal>,
   atlas: { cell: { width: number; height: number } } | undefined,
@@ -40,6 +47,7 @@ export function sendPointerToEngine(
   kind: number,
   button: number,
   event: MouseEvent | WheelEvent,
+  emitData: (bytes: Uint8Array) => void,
 ): boolean {
   const target = pointerTarget(engine, hostBounds, atlas!.cell, dpr, event);
   if (target === null) return false;
@@ -61,6 +69,7 @@ export function sendPointerToEngine(
   if (bytes === undefined) return false;
 
   event.preventDefault();
+  emitData(bytes);
   return true;
 }
 

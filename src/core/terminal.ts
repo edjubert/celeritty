@@ -41,7 +41,6 @@ import { EngineTerminal, encodeKey, engineMemory, loadEngine } from "./wasm";
 type AnyListener = (payload: never) => void;
 
 export class Terminal {
-  readonly #debugId = Math.random().toString(36).slice(2, 8);
   readonly #host: HTMLElement;
   readonly #hostBounds = (): DOMRect => this.#host.getBoundingClientRect();
   readonly #canvas: HTMLCanvasElement;
@@ -167,9 +166,7 @@ export class Terminal {
 
   /** Feed PTY output in. */
   feed(bytes: Uint8Array): void {
-    console.warn(`[celeritty:${this.#debugId}] feed enter`);
     this.#requireEngine("feed").feed(bytes);
-    console.warn(`[celeritty:${this.#debugId}] feed exit`);
     this.#dirty = true;
   }
 
@@ -294,9 +291,7 @@ export class Terminal {
     const renderer = this.#renderer;
     if (engine !== undefined && renderer !== undefined && this.#dirty) {
       try {
-        console.warn(`[celeritty:${this.#debugId}] refreshSnapshot enter`);
         engine.refreshSnapshot();
-        console.warn(`[celeritty:${this.#debugId}] refreshSnapshot exit`);
         const packed = new Uint32Array(engineMemory(), engine.snapshotPtr(), engine.snapshotLen());
         applySelectionHighlight(packed, engine.columns, this.#selectionStart, this.#selectionEnd);
         renderer.render({ columns: engine.columns, lines: engine.screenLines, packed });

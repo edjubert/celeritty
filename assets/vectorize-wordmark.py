@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Regenerate the CeleriTTY wordmarks with outlined glyphs.
+"""Regenerate the CeleriTTY wordmarks and social card with outlined glyphs.
 
 The wordmark carries no live <text>: the glyphs are baked into <path> so the
 lockup renders identically everywhere, with no font to install. Re-run this
@@ -8,7 +8,7 @@ only to change the typeface, the wording, or the colours.
     pip install fonttools
     python3 vectorize-wordmark.py /path/to/IosevkaNerdFont-ExtraBold.ttf
 
-Writes wordmark-dark.svg and wordmark-light.svg next to mark.svg.
+Writes wordmark-{dark,light}.svg and social-card.svg next to mark.svg.
 """
 import os
 import sys
@@ -72,6 +72,61 @@ def build(font_path, body, celeri, tty, out):
     open(out, "w").write(svg)
 
 
+SOCIAL = (1280, 640)
+TAGLINE = "Terminal emulator for the web"
+
+
+def social_card(font_path, body, out):
+    """GitHub social preview: the lockup over a tagline, on the screen ground."""
+    (celeri_d, tty_d), text_w, scale = outline_groups(font_path)
+    bx, by = BASELINE
+    lockup_w = bx + text_w + 20
+
+    # Scale the whole lockup to 62% of the card, then centre it.
+    k = (SOCIAL[0] * 0.62) / lockup_w
+    lx = (SOCIAL[0] - lockup_w * k) / 2
+    ly = 150
+
+    tag_d, tag_w, tag_scale = tagline_path(font_path, 30)
+    tx = (SOCIAL[0] - tag_w) / 2
+
+    svg = f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {SOCIAL[0]} {SOCIAL[1]}"
+     width="{SOCIAL[0]}" height="{SOCIAL[1]}">
+  <!-- CeleriTTY social card. Genere par vectorize-wordmark.py. -->
+  <rect width="{SOCIAL[0]}" height="{SOCIAL[1]}" fill="#131416"/>
+  <g transform="translate({lx:.1f} {ly}) scale({k:.4f})">
+    <g transform="translate(20 20) scale({MARK_SCALE})">
+{body}
+    </g>
+    <g transform="translate({bx} {by}) scale({scale} {-scale})">
+      <path fill="#e7f0c2" d="{celeri_d}"/>
+      <path fill="#8cb93f" d="{tty_d}"/>
+    </g>
+  </g>
+  <g transform="translate({tx:.1f} 500) scale({tag_scale} {-tag_scale})">
+    <path fill="#a7a9ad" d="{tag_d}"/>
+  </g>
+</svg>
+'''
+    open(out, "w").write(svg)
+
+
+def tagline_path(font_path, size):
+    """Same outlining trick as the wordmark, for a single run of text."""
+    font = TTFont(font_path)
+    cmap = font.getBestCmap()
+    glyphs = font.getGlyphSet()
+    hmtx = font["hmtx"]
+    scale = size / font["head"].unitsPerEm
+
+    pen, pen_x = SVGPathPen(glyphs), 0.0
+    for ch in TAGLINE:
+        name = cmap[ord(ch)]
+        glyphs[name].draw(TransformPen(pen, (1, 0, 0, 1, pen_x, 0)))
+        pen_x += hmtx[name][0]
+    return pen.getCommands(), pen_x * scale, scale
+
+
 def main():
     if len(sys.argv) != 2:
         sys.exit(__doc__)
@@ -82,7 +137,8 @@ def main():
           os.path.join(here, "wordmark-dark.svg"))
     build(font_path, body, "#17300f", "#4c8f24",
           os.path.join(here, "wordmark-light.svg"))
-    print("wordmark-dark.svg, wordmark-light.svg")
+    social_card(font_path, body, os.path.join(here, "social-card.svg"))
+    print("wordmark-dark.svg, wordmark-light.svg, social-card.svg")
 
 
 if __name__ == "__main__":

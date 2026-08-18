@@ -13,11 +13,36 @@ with a `tty` in it, and `céleri` is the French for celery.
 | `mark-mono-dark.svg` | One ink, light on dark. |
 | `wordmark-dark.svg` | Horizontal lockup for dark grounds. |
 | `wordmark-light.svg` | Horizontal lockup for light grounds. |
-| `vectorize-wordmark.py` | Regenerates both wordmarks from a TTF. |
+| `social-card.svg` | 1280×640 GitHub social preview. |
+| `favicon.ico` | 16/32/48 bundle. See the note below before using it. |
+| `png/` | Rasters at four steps: `s` `m` `l` `xl`. |
+| `vectorize-wordmark.py` | Regenerates the wordmarks and social card from a TTF. |
+| `build-rasters.py` | Regenerates `png/` and `favicon.ico` from the SVGs. |
 
 There are two cuts because the full mark's title bar and text lines close up
 into mush below roughly 32px. Swap to `mark-favicon.svg` rather than scaling
-the full mark down.
+the full mark down. The favicon cut is square; the full mark is 200×236.
+
+## Rasters
+
+The SVGs are the source of truth. Everything in `png/` and `favicon.ico` is
+derived, so regenerate rather than edit:
+
+```sh
+brew install librsvg
+python3 assets/build-rasters.py
+```
+
+Steps are pixel heights: mark `64/128/256/512`, wordmark `48/96/192/384`,
+favicon `16/32/48/128` (square).
+
+### On favicon.ico
+
+It exists because it was asked for, not because anything needs it. A `.ico`
+earns its place when browsers and crawlers fetch `/favicon.ico` from a site
+root without being told to. celeritty is an npm package with no site, so
+until a docs site appears this file is dead weight — prefer `mark-favicon.svg`
+or the `png/favicon-*.png` steps.
 
 ## Palette
 

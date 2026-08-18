@@ -1,3 +1,10 @@
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/wordmark-dark.svg">
+    <img src="assets/wordmark-light.svg" alt="CeleriTTY" width="420">
+  </picture>
+</p>
+
 # celeritty
 
 Terminal emulator for the web. ANSI parsing runs in Rust compiled to

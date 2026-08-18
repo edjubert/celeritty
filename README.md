@@ -214,6 +214,11 @@ Node 22.18.
 
 Apache-2.0 — see [`LICENSE`](LICENSE).
 
+`assets/` is the exception. The brand artwork is CC BY 4.0, not Apache-2.0,
+so the mascot can be reused *and reworked* — see
+[`assets/LICENSE`](assets/LICENSE). Neither licence grants any right in the
+celeritty name: use it to refer to this project, not to brand yours.
+
 `crates/terminal-core/vendor/alacritty_terminal/` is a patched copy of
 [`alacritty_terminal`](https://github.com/alacritty/alacritty), Copyright The
 Alacritty Project, also Apache-2.0. It keeps its own licence file alongside

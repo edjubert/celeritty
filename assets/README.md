@@ -75,3 +75,10 @@ python3 assets/vectorize-wordmark.py ~/Library/Fonts/IosevkaNerdFont-ExtraBold.t
 
 It reads `mark.svg` for the mark half of the lockup, so a change to the mark
 propagates to both wordmarks on the next run.
+
+## License
+
+CC BY 4.0, not the repository's Apache-2.0 — see [`LICENSE`](LICENSE) in this
+directory. Derivatives are allowed deliberately, so the mascot stays something
+a community can pick up and rework. The name is a separate matter that no
+copyright licence speaks to.

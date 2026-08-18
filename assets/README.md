@@ -13,6 +13,7 @@ with a `tty` in it, and `céleri` is the French for celery.
 | `mark-mono-dark.svg` | One ink, light on dark. |
 | `wordmark-dark.svg` | Horizontal lockup for dark grounds. |
 | `wordmark-light.svg` | Horizontal lockup for light grounds. |
+| `vectorize-wordmark.py` | Regenerates both wordmarks from a TTF. |
 
 There are two cuts because the full mark's title bar and text lines close up
 into mush below roughly 32px. Swap to `mark-favicon.svg` rather than scaling
@@ -33,9 +34,19 @@ the full mark down.
 The greens are the mark's own — they are deliberately not tied to any host
 application's palette.
 
-## Known gap
+## Wordmark
 
-The wordmarks still carry live `<text>` on a system monospace stack, so they
-render differently from machine to machine. Vectorise the glyphs to `<path>`
-(and pick a real typeface while doing it) before using a wordmark anywhere
-public.
+Set in Iosevka ExtraBold (SIL OFL 1.1), condensed enough that the mark keeps
+its weight in the lockup. The glyphs are baked into `<path>`, so the wordmark
+carries no live `<text>` and needs no font installed to render correctly.
+
+To change the typeface or the wording, edit and re-run the generator rather
+than editing the SVGs by hand:
+
+```sh
+pip install fonttools
+python3 assets/vectorize-wordmark.py ~/Library/Fonts/IosevkaNerdFont-ExtraBold.ttf
+```
+
+It reads `mark.svg` for the mark half of the lockup, so a change to the mark
+propagates to both wordmarks on the next run.

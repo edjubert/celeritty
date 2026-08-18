@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-18 0 236 236" width="236" height="236">
+  <!-- CeleriTTY - coupe favicon : 3 nervures, pas de barre de titre ni de texte -->
+  <g transform="translate(6 -39.1) scale(0.94)">
+    <g stroke="#17300f" stroke-width="7" stroke-linejoin="round" paint-order="stroke">
+      <g fill="#2b7030">
+        <path transform="translate(66 118) rotate(-24) scale(1.15)" d="M0 0 C-8 -5 -14 -9 -17 -14 L-10 -17 C-17 -22 -22 -28 -21 -34 L-13 -31 C-17 -39 -14 -47 -7 -50 L-4 -43 C-3 -47 -2 -50 0 -54 C2 -50 3 -47 4 -43 L7 -50 C14 -47 17 -39 13 -31 L21 -34 C22 -28 17 -22 10 -17 L17 -14 C14 -9 8 -5 0 0 Z"/>
+        <path transform="translate(134 118) rotate(24) scale(1.15)" d="M0 0 C-8 -5 -14 -9 -17 -14 L-10 -17 C-17 -22 -22 -28 -21 -34 L-13 -31 C-17 -39 -14 -47 -7 -50 L-4 -43 C-3 -47 -2 -50 0 -54 C2 -50 3 -47 4 -43 L7 -50 C14 -47 17 -39 13 -31 L21 -34 C22 -28 17 -22 10 -17 L17 -14 C14 -9 8 -5 0 0 Z"/>
+      </g>
+      <g fill="#48ab45">
+        <path transform="translate(100 112) rotate(0) scale(1.2)" d="M0 0 C-8 -5 -14 -9 -17 -14 L-10 -17 C-17 -22 -22 -28 -21 -34 L-13 -31 C-17 -39 -14 -47 -7 -50 L-4 -43 C-3 -47 -2 -50 0 -54 C2 -50 3 -47 4 -43 L7 -50 C14 -47 17 -39 13 -31 L21 -34 C22 -28 17 -22 10 -17 L17 -14 C14 -9 8 -5 0 0 Z"/>
+      </g>
+    </g>
+    <g fill="none" stroke-linecap="round">
+      <g stroke="#17300f" stroke-width="34">
+        <path d="M88 165 C80 148 70 132 64 118"/>
+        <path d="M100 165 C100 145 100 128 100 112"/>
+        <path d="M112 165 C120 148 130 132 136 118"/>
+      </g>
+      <path d="M88 165 C80 148 70 132 64 118" stroke="#8cb93f" stroke-width="22"/>
+      <path d="M100 165 C100 145 100 128 100 112" stroke="#c4e277" stroke-width="23"/>
+      <path d="M112 165 C120 148 130 132 136 118" stroke="#8cb93f" stroke-width="22"/>
+    </g>
+  </g>
+  <rect x="33" y="94" width="134" height="134" rx="16"
+        fill="#131416" stroke="#17300f" stroke-width="9"/>
+  <path d="M62 140 L86 161 L62 182" fill="none" stroke="#c4e277"
+        stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="100" y="138" width="26" height="46" rx="4" fill="#c4e277"/>
+</svg>

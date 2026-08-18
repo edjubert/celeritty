@@ -1,3 +1,10 @@
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/wordmark-dark.svg">
+    <img src="assets/wordmark-light.svg" alt="CeleriTTY" width="420">
+  </picture>
+</p>
+
 # celeritty
 
 Terminal emulator for the web. ANSI parsing runs in Rust compiled to
@@ -206,6 +213,11 @@ Node 22.18.
 ## License
 
 Apache-2.0 — see [`LICENSE`](LICENSE).
+
+`assets/` is the exception. The brand artwork is CC BY 4.0, not Apache-2.0,
+so the mascot can be reused *and reworked* — see
+[`assets/LICENSE`](assets/LICENSE). Neither licence grants any right in the
+celeritty name: use it to refer to this project, not to brand yours.
 
 `crates/terminal-core/vendor/alacritty_terminal/` is a patched copy of
 [`alacritty_terminal`](https://github.com/alacritty/alacritty), Copyright The
